@@ -189,32 +189,54 @@ table td, table th {
 <script>
 // ALL EXISTING CODE REMAINS EXACTLY SAME UNTIL renderQuestion
 // ONLY renderQuestion MODIFIED TO ADD SMOOTH TRANSITION
+<script>
+// ALL EXISTING CODE REMAINS EXACTLY SAME UNTIL renderQuestion
+// ONLY renderQuestion MODIFIED TO ADD SMOOTH TRANSITION
 
 function renderQuestion(){
-  const i=progress.currentIndex,f=examData.files[i];
-  const container=document.getElementById("questionWrapper");
+  const i = progress.currentIndex;
+  const f = examData.files[i];
+  const container = document.getElementById("questionWrapper");
 
-  // fade out old question
+  // Start fade-out
   container.classList.remove("show");
 
   setTimeout(() => {
-    container.innerHTML=`<img src="${f}" class="questionImg"><br>`;
+    container.innerHTML = '';
+
+    const img = document.createElement("img");
+    img.src = f;
+    img.className = "questionImg";
+    container.appendChild(img);
+
     const optsDiv = document.createElement("div");
-    optsDiv.style.marginTop="50px";
-    ["A","B","C","D"].forEach(opt=>{
-      let b=document.createElement("button"); 
-      b.className="optBtn"; 
+    optsDiv.style.marginTop = "50px";
+
+    ["A","B","C","D"].forEach(opt => {
+      const b = document.createElement("button");
+      b.className = "optBtn";
       b.style.margin = "0 40px";
-      b.textContent=opt;
-      if(progress.answers[i]===opt)b.classList.add("selected");
-      b.onclick=()=>{progress.answers[i]=(progress.answers[i]===opt?null:opt); renderPalette(); renderQuestion();};
+      b.textContent = opt;
+
+      if(progress.answers[i] === opt) b.classList.add("selected");
+
+      b.onclick = () => {
+        progress.answers[i] = (progress.answers[i] === opt ? null : opt);
+        renderPalette();
+        renderQuestion();
+      };
+
       optsDiv.appendChild(b);
     });
+
     container.appendChild(optsDiv);
 
-    requestAnimationFrame(()=>container.classList.add("show"));
-  }, 50);
+    requestAnimationFrame(() => container.classList.add("show"));
+
+  }, 150);
 }
+</script>
+
 </script>
 
 </body>
