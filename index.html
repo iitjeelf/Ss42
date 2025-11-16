@@ -194,35 +194,38 @@ table td, table th {
 // ALL EXISTING CODE REMAINS EXACTLY SAME UNTIL renderQuestion
 // ONLY renderQuestion MODIFIED TO ADD SMOOTH TRANSITION
 
+// Render current question with smooth transition, glow, and preserve start button
 function renderQuestion(){
   const i = progress.currentIndex;
   const f = examData.files[i];
   const container = document.getElementById("questionWrapper");
 
+  // fade out old question
   container.classList.remove("show");
 
   setTimeout(() => {
-    container.innerHTML = '';
+    // Clear old content
+    container.innerHTML = `<img src="${f}" class="questionImg"><br>`;
 
-    const img = document.createElement("img");
-    img.src = f;
-    img.className = "questionImg";
-    container.appendChild(img);
-
+    // Options container
     const optsDiv = document.createElement("div");
     optsDiv.style.marginTop = "50px";
 
     ["A","B","C","D"].forEach(opt => {
       const b = document.createElement("button");
       b.className = "optBtn";
+
+      // Preserve margin and glow
       b.style.margin = "0 40px";
       b.textContent = opt;
 
+      // Apply green glow for selected answer
       if(progress.answers[i] === opt) b.classList.add("selected");
 
+      // Button click: toggle selection and preserve glow without re-rendering
       b.onclick = () => {
         progress.answers[i] = (progress.answers[i] === opt ? null : opt);
-        renderPalette();
+        renderPalette(); // update palette colors
         updateOptionGlow(container, i);
       };
 
@@ -231,12 +234,13 @@ function renderQuestion(){
 
     container.appendChild(optsDiv);
 
+    // Fade-in smoothly
     requestAnimationFrame(() => container.classList.add("show"));
 
   }, 150);
 }
 
-// Helper to keep glow on selected option buttons
+// Helper function to maintain glow on selected option buttons
 function updateOptionGlow(container, index){
   const buttons = container.querySelectorAll(".optBtn");
   buttons.forEach(b => {
@@ -247,6 +251,30 @@ function updateOptionGlow(container, index){
     }
   });
 }
+
+// Ensure Start Exam button appears when student info is filled
+function checkStudentInfo() {
+  const name = document.getElementById("stuName").value.trim();
+  const section = document.getElementById("stuSection").value.trim();
+  const roll = document.getElementById("stuRoll").value.trim();
+  const adm = document.getElementById("stuAdm").value.trim();
+  const startBtn = document.getElementById("stuStartBtn");
+
+  if(name && section && roll && adm){
+    startBtn.style.display = "inline-block";
+    startBtn.classList.add("glow"); // add red glow effect
+  } else {
+    startBtn.style.display = "none";
+    startBtn.classList.remove("glow");
+  }
+}
+
+// Attach input listeners for student entry fields
+["stuName","stuSection","stuRoll","stuAdm"].forEach(id => {
+  document.getElementById(id).addEventListener("input", checkStudentInfo);
+});
+
+  
 </script>
 
 </script>
