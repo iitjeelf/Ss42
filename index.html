@@ -190,31 +190,59 @@ table td, table th {
 // ALL EXISTING CODE REMAINS EXACTLY SAME UNTIL renderQuestion
 // ONLY renderQuestion MODIFIED TO ADD SMOOTH TRANSITION
 
-function renderQuestion(){
-  const i=progress.currentIndex,f=examData.files[i];
-  const container=document.getElementById("questionWrapper");
+  function renderQuestion() {
+    const i = progress.currentIndex,
+          f = examData.files[i];
+    const container = document.getElementById("questionWrapper");
 
-  // fade out old question
-  container.classList.remove("show");
+    // First render: just show without fading out
+    if (!container.innerHTML) {
+        container.innerHTML = createQuestionHTML(f, i);
+        container.classList.add("show");
+        return;
+    }
 
-  setTimeout(() => {
-    container.innerHTML=`<img src="${f}" class="questionImg"><br>`;
-    const optsDiv = document.createElement("div");
-    optsDiv.style.marginTop="50px";
-    ["A","B","C","D"].forEach(opt=>{
-      let b=document.createElement("button"); 
-      b.className="optBtn"; 
-      b.style.margin = "0 40px";
-      b.textContent=opt;
-      if(progress.answers[i]===opt)b.classList.add("selected");
-      b.onclick=()=>{progress.answers[i]=(progress.answers[i]===opt?null:opt); renderPalette(); renderQuestion();};
-      optsDiv.appendChild(b);
+    // Fade out old question
+    container.classList.remove("show");
+
+    // Wait for fade-out to finish
+    container.addEventListener("transitionend", function handler() {
+        container.removeEventListener("transitionend", handler);
+
+        // Update content without changing anything else (colors, layout, prompt)
+        container.innerHTML = createQuestionHTML(f, i);
+
+        // Fade-in new question
+        requestAnimationFrame(() => container.classList.add("show"));
     });
-    container.appendChild(optsDiv);
-
-    requestAnimationFrame(()=>container.classList.add("show"));
-  }, 50);
 }
+
+// Helper function to create question HTML with options
+function createQuestionHTML(f, i) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = `<img src="${f}" class="questionImg"><br>`;
+
+    const optsDiv = document.createElement("div");
+    optsDiv.style.marginTop = "50px";
+
+    ["A","B","C","D"].forEach(opt => {
+        let b = document.createElement("button");
+        b.className = "optBtn";
+        b.style.margin = "0 40px";
+        b.textContent = opt;
+        if(progress.answers[i] === opt) b.classList.add("selected");
+        b.onclick = () => {
+            progress.answers[i] = (progress.answers[i] === opt ? null : opt);
+            renderPalette();
+            renderQuestion();
+        };
+        optsDiv.appendChild(b);
+    });
+
+    wrapper.appendChild(optsDiv);
+    return wrapper.innerHTML;
+}
+
 </script>
 
 </body>
