@@ -190,31 +190,65 @@ table td, table th {
 // ALL EXISTING CODE REMAINS EXACTLY SAME UNTIL renderQuestion
 // ONLY renderQuestion MODIFIED TO ADD SMOOTH TRANSITION
 
-function renderQuestion(){
-  const i=progress.currentIndex,f=examData.files[i];
-  const container=document.getElementById("questionWrapper");
+<script>
+// ALL EXISTING CODE REMAINS EXACTLY SAME UNTIL renderQuestion
+// ONLY renderQuestion MODIFIED TO ADD SMOOTH TRANSITION
 
-  // fade out old question
+function renderQuestion(){
+  const i = progress.currentIndex;
+  const f = examData.files[i];
+  const container = document.getElementById("questionWrapper");
+
   container.classList.remove("show");
 
   setTimeout(() => {
-    container.innerHTML=`<img src="${f}" class="questionImg"><br>`;
+    container.innerHTML = '';
+
+    const img = document.createElement("img");
+    img.src = f;
+    img.className = "questionImg";
+    container.appendChild(img);
+
     const optsDiv = document.createElement("div");
-    optsDiv.style.marginTop="50px";
-    ["A","B","C","D"].forEach(opt=>{
-      let b=document.createElement("button"); 
-      b.className="optBtn"; 
+    optsDiv.style.marginTop = "50px";
+
+    ["A","B","C","D"].forEach(opt => {
+      const b = document.createElement("button");
+      b.className = "optBtn";
       b.style.margin = "0 40px";
-      b.textContent=opt;
-      if(progress.answers[i]===opt)b.classList.add("selected");
-      b.onclick=()=>{progress.answers[i]=(progress.answers[i]===opt?null:opt); renderPalette(); renderQuestion();};
+      b.textContent = opt;
+
+      if(progress.answers[i] === opt) b.classList.add("selected");
+
+      b.onclick = () => {
+        progress.answers[i] = (progress.answers[i] === opt ? null : opt);
+        renderPalette();
+        updateOptionGlow(container, i);
+      };
+
       optsDiv.appendChild(b);
     });
+
     container.appendChild(optsDiv);
 
-    requestAnimationFrame(()=>container.classList.add("show"));
-  }, 50);
+    requestAnimationFrame(() => container.classList.add("show"));
+
+  }, 150);
 }
+
+// Helper to keep glow on selected option buttons
+function updateOptionGlow(container, index){
+  const buttons = container.querySelectorAll(".optBtn");
+  buttons.forEach(b => {
+    if(b.textContent === progress.answers[index]){
+      b.classList.add("selected");
+    } else {
+      b.classList.remove("selected");
+    }
+  });
+}
+</script>
+
 </script>
 
 </body>
