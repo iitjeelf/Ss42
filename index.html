@@ -357,10 +357,9 @@ function submitExam(){
   logoutBtn.onclick=()=>window.close();
 }
 </script>
-
 /* GOOGLE SHEET UPLOAD */
 function sendToGoogleSheet(data) {
-    const url = "https://script.google.com/macros/s/AKfycbw1g9mdg7j_DIeejvBELr7Kg9dijY-IwWkZg0qIeVSQrJF9P8D0E3VV2fNESwx8Nwt0/exec";  // <-- paste your URL
+    const url = "https://script.google.com/macros/s/AKfycbzKQEx9bFcy6bxpqkpHJvjWVJQysgQXMfYcuaP-GfVkmnySMs0niebkzc4lKjorEnLu/exec";  // <-- paste your URL
 
     fetch(url, {
         method: "POST",
@@ -369,5 +368,6 @@ function sendToGoogleSheet(data) {
         body: JSON.stringify(data)
     }).catch(err => console.log("Sheet Upload Failed:", err));
 }
+      
 </body>
 </html>
